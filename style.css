@@ -8,6 +8,12 @@ html { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: 
 
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; border: 0; padding: 0; white-space: nowrap; clip-path: inset(100%); clip: rect(0 0 0 0); overflow: hidden;}
 
+:root {
+    --grid-width: 9;
+    --grid-height: 9;
+    --square-size: 25px;
+}
+
 html {
     font-size: 125%;
 }
@@ -26,13 +32,15 @@ align-items: center;
 }
 
 .playgrid {
-    display: flex;
-    flex-wrap: wrap;
-    width: 500px;
-    height: 500px;
-    border: 1px solid red;
+    display: grid;
+    grid-template-columns: repeat(var(--grid-width), 1fr);
+    width: calc(var(--grid-width)*var(--square-size));
+    height: calc(var(--grid-height)*var(--square-size));
+    outline: 1px solid red;
 }
 
 .playsquare { 
-    width: 50px;
+    width: var(--square-size);
+    height: var(--square-size);
+    outline: 1px solid red;
 }
