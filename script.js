@@ -4,42 +4,60 @@ const app = {};
 // Intermediate 40 -> 16x16
 // Expert 99 -> 30x16
 app.grid = document.querySelector('.playgrid');
-app.difficulty = 3;
-// difficulty
-// 1 = easy
-// 2 = intermediate
-// 3 = expert
+app.difficulty = 'beginner';
+
+app.gameInfo =
+
+{
+    beginner: {
+        width: 9,
+        height: 9,
+        mines: 10,
+    },
+    intermediate: {
+        width: 16,
+        height: 16,
+        mines: 40,
+    },
+    expert: {
+        width: 30,
+        height: 16,
+        mines: 99,
+    }
+};
+
+
 
 
 app.setDifficulty = () => {
     const r = document.querySelector(':root');
+    const gameType = app.gameInfo[app.difficulty];
+    const { width, height, mines } = gameType;
 
-    let gridWidth = 0, gridHeight = 0;
+    r.style.setProperty('--grid-width', width);
+    r.style.setProperty('--grid-height', height);
 
-    if (app.difficulty === 1) {
-        r.style.setProperty('--grid-width', 9);
-        r.style.setProperty('--grid-height', 9);
-        gridWidth = 9;
-        gridHeight = 9;
-    } else if (app.difficulty === 2) {
-        r.style.setProperty('--grid-width', 16);
-        r.style.setProperty('--grid-height', 16);
-        gridWidth = 16;
-        gridHeight = 16;
+    app.makeGrid(width, height);
+    app.setMines(mines);
+}
 
-    } else if (app.difficulty === 3) {
-        r.style.setProperty('--grid-width', 30);
-        r.style.setProperty('--grid-height', 16);
-        gridWidth = 30;
-        gridHeight = 16;
+app.setMines = (mines) => {
+    const squares = [...document.querySelectorAll('.playsquare')];
+
+    for (let i = 0; i < mines; i++) {
+        // number between 0 and 80 for the indices of the nodelist
+        const newIndex = Math.floor(Math.random() * squares.length);
+        squares[newIndex].classList.add('mine');
+        squares.splice(newIndex, 1);
     }
 
-    app.makeGrid(gridWidth, gridHeight);
 }
 
 app.makeGrid = (gridWidth, gridHeight) => {
-    for (let i = 1; i < (gridWidth * gridHeight); i++) {
-        const square = document.createElement('div');
+
+
+    for (let i = 1; i <= (gridWidth * gridHeight); i++) {
+        const square = document.createElement('button');
         square.classList.add('playsquare');
         app.grid.append(square);
     }
