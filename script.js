@@ -5,9 +5,11 @@ const app = {};
 // Expert 99 -> 30x16
 app.grid = document.querySelector('.playgrid');
 app.difficulty = 'beginner';
+// will be an array of objects
+// app.squareInfo = [];
+app.minesSquares = [];
 
 app.gameInfo =
-
 {
     beginner: {
         width: 9,
@@ -26,9 +28,6 @@ app.gameInfo =
     }
 };
 
-
-
-
 app.setDifficulty = () => {
     const r = document.querySelector(':root');
     const gameType = app.gameInfo[app.difficulty];
@@ -43,18 +42,21 @@ app.setDifficulty = () => {
 
 app.setMines = (mines) => {
     const squares = [...document.querySelectorAll('.playsquare')];
+    const squaresRest = [...squares];
 
     for (let i = 0; i < mines; i++) {
         // number between 0 and 80 for the indices of the nodelist
-        const newIndex = Math.floor(Math.random() * squares.length);
-        squares[newIndex].classList.add('mine');
-        squares.splice(newIndex, 1);
+        const newIndex = Math.floor(Math.random() * squaresRest.length);
+        app.minesSquares.push(newIndex);
+        squaresRest.splice(newIndex, 1);
     }
 
+    app.minesSquares.forEach(mine => {
+        squares[mine].classList.add('mine');
+    });
 }
 
 app.makeGrid = (gridWidth, gridHeight) => {
-
 
     for (let i = 1; i <= (gridWidth * gridHeight); i++) {
         const square = document.createElement('button');
@@ -63,10 +65,27 @@ app.makeGrid = (gridWidth, gridHeight) => {
     }
 }
 
+app.setNumbers = () => {
 
+}
+
+app.handleSquareClick = () => {
+    const squares = document.querySelectorAll('.playsquare');
+    const grid = document.querySelector('.playgrid');
+
+    grid.addEventListener('contextmenu', e => e.preventDefault());
+
+    squares.forEach(square => {
+        square.addEventListener('contextmenu', (e) => {
+            square.classList.toggle('flag');
+        })
+    })
+};
 
 app.init = () => {
     app.setDifficulty();
+    app.handleSquareClick();
+    console.log(app.minesSquares.sort((a, b) => a - b));
 };
 
 app.init();
