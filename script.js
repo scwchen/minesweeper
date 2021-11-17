@@ -1,14 +1,23 @@
 const app = {};
 
-// Beginner 10 -> 9x9
-// Intermediate 40 -> 16x16
-// Expert 99 -> 30x16
 app.grid = document.querySelector('.playgrid');
 app.difficulty = 'beginner';
-// will be an array of objects
+
 app.squareInfo = [];
 app.width = 0;
 app.height = 0;
+app.seconds = 0;
+app.start = false;
+app.timerInterval = setInterval(() => {
+    app.setTimer();
+}, 1000);
+
+app.init = () => {
+
+    app.setDifficulty();
+    app.handleSquareClick();
+
+};
 
 app.gameInfo =
 {
@@ -57,7 +66,9 @@ app.getRandom = (max) => {
 
 app.setMines = (mines) => {
     const squares = document.querySelectorAll('.playsquare');
+    const numMines = document.querySelector('.num-mines');
 
+    numMines.innerText = mines.toString().padStart(3, '0');
     for (let i = 0; i < mines; i++) {
         // number between 0 and 80 for the indices of the nodelist
         const newIndex = app.getRandom(squares.length);
@@ -94,35 +105,84 @@ app.setNumbers = () => {
     mines.forEach(square => {
         const mine = square.id;
         const left = mine - 1;
+        const top = mine - app.width;
+        const topLeft = top - 1;
+        const topRight = top + 1;
         const right = mine + 1;
-        const up = mine - app.width;
-        const down = mine + app.width;
+        const bottom = mine + app.width;
+        const bottomLeft = bottom - 1;
+        const bottomRight = bottom + 1;
+
         const maxIndex = app.width * app.height - 1;
 
-        // if left of the mine is still on the grid, not on a mine, and on the same line
-        if (left >= 0 && !mines.includes(left)) {
+        // Can probably clean this up with a function and some ternaries but this works for now
+        if (left >= 0 && !app.squareInfo[left].mine && Math.floor(mine / app.width) === Math.floor(left / app.width)) {
             app.squareInfo[left].number += 1;
         }
-        if (right <= maxIndex && !mines.includes(right)) {
+        if (top >= 0 && !app.squareInfo[top].mine) {
+            app.squareInfo[top].number += 1;
+        }
+        if (right <= maxIndex && !app.squareInfo[right].mine && Math.floor(mine / app.width) === Math.floor(right / app.width)) {
             app.squareInfo[right].number += 1;
         }
-        if (up >= 0 && !mines.includes(up)) {
-            app.squareInfo[up].number += 1;
+        if (bottom <= maxIndex && !app.squareInfo[bottom].mine) {
+            app.squareInfo[bottom].number += 1;
         }
-        if (down <= maxIndex && !mines.includes(down)) {
-            app.squareInfo[down].number += 1;
+        if (topLeft >= 0 && !app.squareInfo[topLeft].mine && Math.floor(mine / app.width) === Math.floor(topLeft / app.width) + 1) {
+            app.squareInfo[topLeft].number += 1;
         }
+        if (topRight >= 0 && !app.squareInfo[topRight].mine && Math.floor(mine / app.width) === Math.floor(topRight / app.width) + 1) {
+            app.squareInfo[topRight].number += 1;
+        }
+        if (bottomRight <= maxIndex && !app.squareInfo[bottomRight].mine && Math.floor(mine / app.width) === Math.floor(bottomRight / app.width) - 1) {
+            app.squareInfo[bottomRight].number += 1;
+        }
+        if (bottomLeft <= maxIndex && !app.squareInfo[bottomLeft].mine && Math.floor(mine / app.width) === Math.floor(bottomLeft / app.width) - 1) {
+            app.squareInfo[bottomLeft].number += 1;
+        }
+
     });
 
     app.squareInfo.forEach((square) => {
+        const changeSquare = squares[square.id];
         if (square.number > 0) {
-            squares[square.id].innerText = `${square.number}`;
+            changeSquare.innerText = `${square.number}`;
+            switch (square.number) {
+                case 1: changeSquare.style.color = 'blue';
+                    break;
+                case 2: changeSquare.style.color = 'green';
+                    break;
+                case 3: changeSquare.style.color = 'red';
+                    break;
+                case 4: changeSquare.style.color = 'purple';
+                    break;
+                case 5: changeSquare.style.color = 'black';
+                    break;
+                case 6: changeSquare.style.color = 'grey';
+                    break;
+                case 7: changeSquare.style.color = 'maroon';
+                    break;
+                case 8: changeSquare.style.color = 'turquoise';
+                    break;
+            }
         }
 
     })
 
 }
 
+app.handleReset = () => {
+    const reset = document.querySelector('.reset');
+    reset.addEventListener('click', () => {
+        console.log('reset');
+        app.squareInfo = [];
+        app.width = 0;
+        app.height = 0;
+        app.seconds = 0;
+
+        app.init();
+    })
+}
 app.handleSquareClick = () => {
 
     const grid = document.querySelector('.playgrid');
@@ -136,19 +196,27 @@ app.handleSquareClick = () => {
             square.classList.toggle('flag');
         });
         square.addEventListener('click', (e) => {
-            app.showSquare(e.target.id);
+            // app.showSquare(e.target.id);
+            // app.start = !app.start;
         });
     })
 };
 
-app.showSquare = (square) => {
-    const squares = document.querySelectorAll('.playsquare');
-
+app.setTimer = () => {
+    const timer = document.querySelector('.timer');
+    if (app.seconds >= 999) {
+        clearInterval(app.timerInterval);
+    } else if (app.start) {
+        app.seconds += 1;
+        timer.innerText = app.seconds.toString().padStart(3, '0');
+    }
 }
+// app.showSquare = (square) => {
+//     const squares = document.querySelectorAll('.playsquare');
 
-app.init = () => {
-    app.setDifficulty();
-    app.handleSquareClick();
-};
+// }
+
+
+
 
 app.init();
