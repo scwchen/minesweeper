@@ -296,3 +296,8 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
 }
+
+.playsquare.show {
+    background-color: red;
+}
+
