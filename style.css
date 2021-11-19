@@ -266,6 +266,11 @@ body {
     margin: 0 auto;
 }
 
+
+.difficulty .chosen {
+    outline: 1px solid red;
+}
+
 .score-board {
     font-family: 'clock-font', sans-serif;
 }

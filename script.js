@@ -1,7 +1,7 @@
 const app = {};
 
 app.grid = document.querySelector('.playgrid');
-app.difficulty = 'beginner';
+app.difficulty = 'intermediate';
 
 app.squareInfo = [];
 app.width = 0;
@@ -52,6 +52,7 @@ app.setDifficulty = () => {
     app.setMines(numMines);
     app.setNumbers();
 }
+
 
 app.getRandom = (max) => {
     const newRandom = Math.floor(Math.random() * max);
@@ -196,6 +197,9 @@ app.handleSquareClick = () => {
             square.classList.toggle('flag');
         });
         square.addEventListener('click', (e) => {
+            if (app.squareInfo[e.target.id].mine === false) {
+                e.target.classList.add('show');
+            }
             // app.showSquare(e.target.id);
             // app.start = !app.start;
         });
@@ -215,8 +219,5 @@ app.setTimer = () => {
 //     const squares = document.querySelectorAll('.playsquare');
 
 // }
-
-
-
 
 app.init();
