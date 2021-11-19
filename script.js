@@ -1,7 +1,8 @@
 const app = {};
 
 app.grid = document.querySelector('.playgrid');
-app.difficulty = 'intermediate';
+
+app.difficulty = 'beginner';
 
 app.squareInfo = [];
 app.width = 0;
@@ -14,10 +15,14 @@ app.timerInterval = setInterval(() => {
 
 app.init = () => {
 
+
     app.setDifficulty();
     app.handleSquareClick();
+    app.handleDifficultyChange();
 
 };
+
+
 
 app.gameInfo =
 {
@@ -53,6 +58,21 @@ app.setDifficulty = () => {
     app.setNumbers();
 }
 
+app.handleDifficultyChange = () => {
+    const diffButtons = document.querySelectorAll('.difficulty button');
+
+    diffButtons.forEach((button) => {
+
+        button.addEventListener('click', (e) => {
+            diffButtons.forEach((prevButton) => {
+                prevButton.classList.remove('chosen');
+            })
+            button.classList.add('chosen');
+            app.difficulty = e.target.classList[0];
+            app.reset();
+        });
+    });
+};
 
 app.getRandom = (max) => {
     const newRandom = Math.floor(Math.random() * max);
@@ -174,16 +194,19 @@ app.setNumbers = () => {
 
 app.handleReset = () => {
     const reset = document.querySelector('.reset');
-    reset.addEventListener('click', () => {
-        console.log('reset');
-        app.squareInfo = [];
-        app.width = 0;
-        app.height = 0;
-        app.seconds = 0;
-
-        app.init();
-    })
+    reset.addEventListener('click', app.reset);
 }
+
+app.reset = () => {
+    // app.squareInfo = [];
+    // app.width = 0;
+    // app.height = 0;
+    // app.seconds = 0;
+
+    app.init();
+};
+
+
 app.handleSquareClick = () => {
 
     const grid = document.querySelector('.playgrid');
@@ -200,8 +223,6 @@ app.handleSquareClick = () => {
             if (app.squareInfo[e.target.id].mine === false) {
                 e.target.classList.add('show');
             }
-            // app.showSquare(e.target.id);
-            // app.start = !app.start;
         });
     })
 };
@@ -215,9 +236,6 @@ app.setTimer = () => {
         timer.innerText = app.seconds.toString().padStart(3, '0');
     }
 }
-// app.showSquare = (square) => {
-//     const squares = document.querySelectorAll('.playsquare');
 
-// }
 
 app.init();
