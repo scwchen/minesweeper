@@ -119,20 +119,25 @@ app.makeGrid = () => {
 
 }
 
+app.squaresAround = (square) => {
+    const left = square - 1;
+    const top = square - app.width;
+    const topLeft = top - 1;
+    const topRight = top + 1;
+    const right = square + 1;
+    const bottom = square + app.width;
+    const bottomLeft = bottom - 1;
+    const bottomRight = bottom + 1;
+
+    return [left, top, topLeft, topRight, right, bottom, bottomLeft, bottomRight];
+}
 app.setNumbers = () => {
     const squares = document.querySelectorAll('.playsquare');
     const mines = app.squareInfo.filter(square => square.mine);
 
     mines.forEach(square => {
         const mine = square.id;
-        const left = mine - 1;
-        const top = mine - app.width;
-        const topLeft = top - 1;
-        const topRight = top + 1;
-        const right = mine + 1;
-        const bottom = mine + app.width;
-        const bottomLeft = bottom - 1;
-        const bottomRight = bottom + 1;
+        const [left, top, topLeft, topRight, right, bottom, bottomLeft, bottomRight] = app.squaresAround(mine);
 
         const maxIndex = app.width * app.height - 1;
 
@@ -202,8 +207,6 @@ app.reset = () => {
     // app.width = 0;
     // app.height = 0;
     // app.seconds = 0;
-
-    app.init();
 };
 
 
@@ -220,11 +223,21 @@ app.handleSquareClick = () => {
             square.classList.toggle('flag');
         });
         square.addEventListener('click', (e) => {
-            if (app.squareInfo[e.target.id].mine === false) {
-                e.target.classList.add('show');
-            }
+            app.showSquare(e.target);
         });
     })
+};
+
+app.showSquare = (square) => {
+    if (app.squareInfo[square.id].mine === false) {
+        if (app.squareInfo[square.id].number !== 0) {
+            square.classList.add('show');
+        } else {
+            square.classList.add('show');
+            // recursion for all the squares around it.
+        }
+    }
+
 };
 
 app.setTimer = () => {
@@ -239,3 +252,28 @@ app.setTimer = () => {
 
 
 app.init();
+
+// if (left >= 0 && !app.squareInfo[left].mine && Math.floor(mine / app.width) === Math.floor(left / app.width)) {
+//     app.squareInfo[left].number += 1;
+// }
+// if (top >= 0 && !app.squareInfo[top].mine) {
+//     app.squareInfo[top].number += 1;
+// }
+// if (right <= maxIndex && !app.squareInfo[right].mine && Math.floor(mine / app.width) === Math.floor(right / app.width)) {
+//     app.squareInfo[right].number += 1;
+// }
+// if (bottom <= maxIndex && !app.squareInfo[bottom].mine) {
+//     app.squareInfo[bottom].number += 1;
+// }
+// if (topLeft >= 0 && !app.squareInfo[topLeft].mine && Math.floor(mine / app.width) === Math.floor(topLeft / app.width) + 1) {
+//     app.squareInfo[topLeft].number += 1;
+// }
+// if (topRight >= 0 && !app.squareInfo[topRight].mine && Math.floor(mine / app.width) === Math.floor(topRight / app.width) + 1) {
+//     app.squareInfo[topRight].number += 1;
+// }
+// if (bottomRight <= maxIndex && !app.squareInfo[bottomRight].mine && Math.floor(mine / app.width) === Math.floor(bottomRight / app.width) - 1) {
+//     app.squareInfo[bottomRight].number += 1;
+// }
+// if (bottomLeft <= maxIndex && !app.squareInfo[bottomLeft].mine && Math.floor(mine / app.width) === Math.floor(bottomLeft / app.width) - 1) {
+//     app.squareInfo[bottomLeft].number += 1;
+// }
